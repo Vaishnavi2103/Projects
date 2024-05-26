@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demonstration of Driver Distraction</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f3f4f6;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #333333;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            border: none;
+            padding: 16px 32px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #45a049;
+        }
+
+        #b1 {
+            border: none;
+            padding: 16px 32px;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: #ffffff;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        #b1:hover {
+            background-color: #2980b9;
+        }
+
+        #results {
+            margin-top: 20px;
+            color: #333333;
+            font-size: 20px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Demonstration of Driver Distraction</h1>
+        <label for="ifile" class="custom-file-upload">Choose File</label>
+        <input type="file" id="ifile" name="ifile">
+        <button id="b1">Check</button>
+        <div id="results"></div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#b1").click(function () {
+                var files = $('#ifile')[0].files[0];
+                var fd = new FormData(); 
+                fd.append('ifile', files);
+                $("#results").html("Please wait until prediction completes");
+                $.ajax({
+                    type: "POST",
+                    url: "/capture",
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        $("#results").html(data);
+                        // Speak out the prediction result
+                        speak(data);
+                    }
+                });
+            });
+
+            // Function to speak out the given text
+            function speak(text) {
+                var synth = window.speechSynthesis;
+                var utterance = new SpeechSynthesisUtterance(text);
+                synth.speak(utterance);
+            }
+        });
+    </script>
+</body>
+</html>
